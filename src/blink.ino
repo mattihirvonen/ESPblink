@@ -1,6 +1,8 @@
 /*
   Blink:  Turns an LED on for one second, then off for one second, repeatedly.
 */
+#include <task.h>
+
 
   #define LED_TASK 0
 //#define LED_SERVER_CORE  1
