@@ -38,7 +38,7 @@ void setup()
 
     // Require delay for PC PlatformIO to open terminal monitor COM port
     delay(3000);
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("LED blinker application started");
 
     #if    LED_TASK
