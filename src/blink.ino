@@ -3,8 +3,8 @@
 */
 #include <task.h>
 
-
-  #define LED_TASK 0
+  #define SERIAL_PRINT     0
+  #define LED_TASK         0
 //#define LED_SERVER_CORE  1
 
   #define LED_TASK_STACK_SIZE    100    // words not bytes
@@ -23,7 +23,9 @@ void blink_led( void )
 // https://www.freertos.org/a00125.html
 void vTaskLedBlink( void * pvParameters )
 {
+    #if SERIAL_PRINT
     Serial.println("LED blinker task started");
+    #endif
     
     while ( 1 )
     {
@@ -38,7 +40,7 @@ void setup()
     // initialize digital pin LED_BUILTIN as an output.
     pinMode(LED_BUILTIN, OUTPUT);
 
-    #if 0
+    #if SERIAL_PRINT
     Serial.begin (115200);
     Serial.println("LED blinker application started");
     #endif
