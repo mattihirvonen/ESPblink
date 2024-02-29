@@ -1,13 +1,17 @@
 /*
   Blink:  Turns an LED on for one second, then off for one second, repeatedly.
+
+  Default CPU cores:
+  - 1 for setup() and loop() functions (running priority 1)
+  - 0 for tasks  (default priority 1)
 */
 #include <task.h>
 
-  #define LED_TASK               1       // Own task or periodic loop()
-//#define LED_TASK_CORE      cc  1
-  #define LED_TASK_STACK_SIZE    1024    // words not bytes, must be big value (2048)
+  #define LED_TASK               1     // Run as task or periodic loop()
+//#define LED_TASK_CORE          1
+  #define LED_TASK_STACK_SIZE    configMINIMAL_STACK_SIZE   // Bytes!
   #define tskNORMAL_PRIORITY     1
-
+ 
 
 void blink_led( void )
 {
@@ -21,7 +25,12 @@ void blink_led( void )
 // https://www.freertos.org/a00125.html
 void vTaskLedBlink( void * pvParameters )
 {
-    Serial.println("LED blinker task started");
+    Serial.print( "LED blinker task started on: Core " );
+    Serial.println( xPortGetCoreID() );
+    Serial.print( "LED blinker task stack size: " );
+    Serial.println( LED_TASK_STACK_SIZE );
+    Serial.print( "LED blinker task priority:   ");
+    Serial.println( uxTaskPriorityGet(NULL) );
     
     while ( 1 )
     {
@@ -39,14 +48,15 @@ void setup()
     // Require delay for PC PlatformIO to open terminal monitor COM port
     delay(3000);
     Serial.begin(115200);
-    Serial.println("LED blinker application started");
+    Serial.print( "LED blinker application started on: Core " );
+    Serial.println( xPortGetCoreID() );
 
     #if    LED_TASK
-    #ifdef LED_SERVER_CORE
+    #ifdef LED_TASK_CORE
       BaseType_t led_taskCreated = xTaskCreatePinnedToCore (vTaskLedBlink, "blinkLED", LED_TASK_STACK_SIZE, NULL, tskNORMAL_PRIORITY, NULL, LED_TASK_CORE);
     #else
       BaseType_t led_taskCreated = xTaskCreate (vTaskLedBlink, "blinkLED", LED_TASK_STACK_SIZE, NULL, tskNORMAL_PRIORITY, NULL);
-    #endif // LED_SERVER_CORE
+    #endif // LED_TASK_CORE
     #endif // LED_TASK
 }
 
